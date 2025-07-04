@@ -47,6 +47,8 @@ class CustomBrowser(webdriver.Chrome):
 
                 if disable_image:
                     options.add_argument("--blink-settings=imagesEnabled=false")
+                    prefs = {"profile.managed_default_content_settings.images": 2}
+                    options.add_experimental_option("prefs", prefs)
 
                 # 调用父类（webdriver.Chrome）的构造器
                 super().__init__(service=service, options=options)

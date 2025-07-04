@@ -1,6 +1,6 @@
 [project]
 name = "wu-xian-shi-xun-mylib"
-version = "2025.7.4.1"
+version = "2025.7.4.2"
 description = "custom browser control lib"
 readme = "README.md"
 authors = [
