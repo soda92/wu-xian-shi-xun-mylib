@@ -24,7 +24,7 @@ query_count = 0
 
 
 class CustomBrowser(webdriver.Chrome):
-    def __init__(self):
+    def __init__(self, disable_image=False):
         # 读取配置文件
         config = configparser.ConfigParser()
         config.read('配置文件/config.ini', encoding='utf-8')
@@ -44,6 +44,9 @@ class CustomBrowser(webdriver.Chrome):
                 options.add_argument('-ignore-ssl-errors')
                 options.add_argument("--disable-blink-features=AutomationControlled")
                 options.add_experimental_option('excludeSwitches', ['enable-automation'])
+
+                if disable_image:
+                    options.add_argument("--blink-settings=imagesEnabled=false")
 
                 # 调用父类（webdriver.Chrome）的构造器
                 super().__init__(service=service, options=options)
