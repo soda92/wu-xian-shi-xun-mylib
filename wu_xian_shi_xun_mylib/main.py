@@ -3,7 +3,6 @@ from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.firefox.service import Service as FirefoxService
-import pkg_resources
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
