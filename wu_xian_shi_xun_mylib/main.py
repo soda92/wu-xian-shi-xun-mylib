@@ -15,10 +15,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from typing import Optional
 import time
-from fake_useragent import UserAgent
 from selenium.webdriver.support.wait import WebDriverWait
-
-ua = UserAgent()
 # 初始化查询次数计数器
 query_count = 0
 
@@ -67,13 +64,9 @@ class CustomBrowser(webdriver.Chrome):
                 super().__init__(service=service, options=options)
         elif google == 'hh':  # 火狐浏览器
             if browser_drivers == 'yes':
-                ua = UserAgent()
                 geckodriver_path = "geckodriver.exe"
                 service = Service(geckodriver_path)
                 options = webdriver.FirefoxOptions()
-                # 更换头部
-                ua = ua.random
-                options.set_preference('general.useragent.override', ua)
                 options.add_argument('-ignore-certificate-errors')
                 options.add_argument('-ignore-ssl-errors')
                 options.add_argument("--disable-blink-features=AutomationControlled")
