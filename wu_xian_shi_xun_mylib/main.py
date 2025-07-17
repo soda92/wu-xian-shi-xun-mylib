@@ -1,21 +1,10 @@
 import configparser
 from selenium import webdriver
-from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from selenium.webdriver.remote.webelement import WebElement
-from typing import Optional
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from typing import Optional
-import time
-from selenium.webdriver.support.wait import WebDriverWait
 # 初始化查询次数计数器
 query_count = 0
 
@@ -42,16 +31,36 @@ class CustomBrowser(webdriver.Chrome):
                 options.add_argument("--disable-blink-features=AutomationControlled")
                 options.add_experimental_option('excludeSwitches', ['enable-automation'])
 
+                # # 中文语言
+                # options.add_argument("--lang=zh-CN")
+                # # 用户目录
+                # from pathlib import Path
+                # temp_user_data_dir = Path("chrome_data")
+                # temp_user_data_dir.mkdir(exist_ok=True)
+                # options.add_argument(f"user-data-dir={temp_user_data_dir}")
+
                 if disable_image:
                     options.add_argument("--blink-settings=imagesEnabled=false")
-                    prefs = {"profile.managed_default_content_settings.images": 2}
-                    options.add_experimental_option("prefs", prefs)
+                    # TODO KEY 冲突
+                    # prefs = {"profile.managed_default_content_settings.images": 2}
+                    # options.add_experimental_option("prefs", prefs)
+
+                # 方法一：禁用密码保存提示（推荐）
+                # 这会禁止浏览器弹出“保存密码”的提示
+                options.add_experimental_option("prefs", {
+                    "credentials_enable_service": False,
+                    "profile.password_manager_enabled": False
+                })
 
                 # 调用父类（webdriver.Chrome）的构造器
                 super().__init__(service=service, options=options)
+                self.set_page_load_timeout(600)  # 页面加载超时
+                self.implicitly_wait(10)  # 元素未找到时的等待时间
         elif google == 'google':
             if browser_drivers == 'no':
                 super().__init__()
+                self.set_page_load_timeout(600)
+                self.implicitly_wait(10)
             elif browser_drivers == 'yes':
                 driver_path = "chromedriver.exe"
                 service = Service(driver_path)
@@ -60,8 +69,14 @@ class CustomBrowser(webdriver.Chrome):
                 options.add_argument('-ignore-ssl-errors')
                 options.add_argument("--disable-blink-features=AutomationControlled")
                 options.add_experimental_option('excludeSwitches', ['enable-automation'])
+                if disable_image:
+                    options.add_argument("--blink-settings=imagesEnabled=false")
+                    prefs = {"profile.managed_default_content_settings.images": 2}
+                    options.add_experimental_option("prefs", prefs)
 
                 super().__init__(service=service, options=options)
+                self.set_page_load_timeout(600)
+                self.implicitly_wait(10)
         elif google == 'hh':  # 火狐浏览器
             if browser_drivers == 'yes':
                 geckodriver_path = "geckodriver.exe"
@@ -79,6 +94,11 @@ class CustomBrowser(webdriver.Chrome):
 
 
                 super().__init__(service=service, options=options)
+                self.set_page_load_timeout(600)
+                self.implicitly_wait(10)
+
+        # from kapybara.shared_data import shared_data
+        # shared_data.driver = self
 
     def stop(self):
         self.quit()
